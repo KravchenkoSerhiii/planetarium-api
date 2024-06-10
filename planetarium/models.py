@@ -5,7 +5,7 @@ from django.conf import settings
 class PlanetariumDome(models.Model):
     name = models.CharField(max_length=65)
     rows = models.IntegerField()
-    sessions_in_rows = models.IntegerField()
+    seats_in_row = models.IntegerField()
 
     def __str__(self):
         return self.name
