@@ -1,3 +1,6 @@
+from datetime import datetime
+
+from django.db.models import F, Count
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.viewsets import GenericViewSet
@@ -16,7 +19,7 @@ from planetarium.serializers import (
     ShowSessionSerializer,
     TicketSerializer,
     AstronomyShowSerializer,
-    ReservationSerializer
+    ReservationSerializer, ShowSessionListSerializer, ShowSessionDetailSerializer
 )
 
 
@@ -31,8 +34,41 @@ class ShowThemeViewSet(viewsets.ModelViewSet):
 
 
 class ShowSessionViewSet(viewsets.ModelViewSet):
-    queryset = ShowSession.objects.all()
+    queryset = (
+        ShowSession.objects.all()
+        .select_related("astronomy_show", "planetarium_dome")
+        .annotate(
+            tickets_available=(
+                F("planetarium_dome__rows") * F("planetarium_dome__seats_in_row")
+                - Count("tickets")
+            )
+        )
+    )
     serializer_class = ShowSessionSerializer
+
+    def get_queryset(self):
+        date = self.request.query_params.get("date")
+        show_id_str = self.request.query_params.get("show")
+
+        queryset = self.queryset
+
+        if date:
+            date = datetime.strptime(date, "%Y-%m-%d").date()
+            queryset = queryset.filter(show_time__date=date)
+
+        if show_id_str:
+            queryset = queryset.filter(show_id=int(show_id_str))
+
+        return queryset
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return ShowSessionListSerializer
+
+        if self.action == "retrieve":
+            return ShowSessionDetailSerializer
+
+        return ShowSessionSerializer
 
 
 class AstronomyShowViewSet(viewsets.ModelViewSet):
