@@ -10,7 +10,10 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from planetarium.models import PlanetariumDome, ShowSession, AstronomyShow
-from planetarium.serializers import AstronomyShowDetailSerializer, AstronomyShowListSerializer
+from planetarium.serializers import (
+    AstronomyShowDetailSerializer,
+    AstronomyShowListSerializer,
+)
 
 SHOW_URL = reverse("planetarium:astronomyshow-list")
 SHOW_SESSION_URL = reverse("planetarium:showsession-list")
@@ -20,7 +23,7 @@ def sample_show(**params):
     defaults = {
         "title": "Sample show",
         "description": "Sample description",
-        "image": None
+        "image": None,
     }
     defaults.update(params)
 

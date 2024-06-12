@@ -20,6 +20,4 @@ router.register("astronomy-shows", AstronomyShowViewSet)
 router.register("tickets", TicketViewSet)
 router.register("reservations", ReservationViewSet)
 
-urlpatterns = [
-    path("", include(router.urls), name="planetarium")
-]
+urlpatterns = [path("", include(router.urls), name="planetarium")]

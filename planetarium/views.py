@@ -1,12 +1,10 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
 
 from planetarium.models import (
     PlanetariumDome,
@@ -14,7 +12,7 @@ from planetarium.models import (
     ShowSession,
     AstronomyShow,
     Reservation,
-    Ticket
+    Ticket,
 )
 from planetarium.permissions import IsAdminOrIfAuthenticatedReadOnly
 from planetarium.serializers import (
@@ -23,8 +21,13 @@ from planetarium.serializers import (
     ShowSessionSerializer,
     TicketSerializer,
     AstronomyShowSerializer,
-    ReservationSerializer, ShowSessionListSerializer, ShowSessionDetailSerializer, ReservationListSerializer,
-    AstronomyShowListSerializer, AstronomyShowDetailSerializer, AstronomyShowImageSerializer
+    ReservationSerializer,
+    ShowSessionListSerializer,
+    ShowSessionDetailSerializer,
+    ReservationListSerializer,
+    AstronomyShowListSerializer,
+    AstronomyShowDetailSerializer,
+    AstronomyShowImageSerializer,
 )
 
 
@@ -45,7 +48,8 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
         .select_related("astronomy_show", "planetarium_dome")
         .annotate(
             tickets_available=(
-                F("planetarium_dome__rows") * F("planetarium_dome__seats_in_row")
+                F("planetarium_dome__rows")
+                * F("planetarium_dome__seats_in_row")
                 - Count("tickets")
             )
         )
@@ -116,7 +120,9 @@ class AstronomyShowViewSet(viewsets.ModelViewSet):
 class ReservationViewSet(viewsets.ModelViewSet):
     # queryset = Reservation.objects.all()
     queryset = Reservation.objects.prefetch_related(
-        "tickets__show_session__astronomy_show", "tickets__show_session__planetarium_dome", "tickets__show_session__astronomy_show_id",
+        "tickets__show_session__astronomy_show",
+        "tickets__show_session__planetarium_dome",
+        "tickets__show_session__astronomy_show_id",
     )
     serializer_class = ReservationSerializer
     permission_classes = (IsAuthenticated,)
@@ -137,5 +143,3 @@ class ReservationViewSet(viewsets.ModelViewSet):
 class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
-
-
