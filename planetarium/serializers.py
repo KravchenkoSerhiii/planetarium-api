@@ -47,7 +47,6 @@ class ShowSessionListSerializer(ShowSessionSerializer):
 
 
 
-
 class PlanetariumDomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlanetariumDome
@@ -57,8 +56,25 @@ class PlanetariumDomeSerializer(serializers.ModelSerializer):
 class AstronomyShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = AstronomyShow
-        fields = ("id", "title", "description")
+        fields = ("id", "title", "description", "image")
 
+
+class AstronomyShowListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AstronomyShow
+        fields = ("id", "title", "description", "image")
+
+
+class AstronomyShowDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AstronomyShow
+        fields = ("id", "title", "description", "image")
+
+
+class AstronomyShowImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AstronomyShow
+        fields = ("id", "image")
 
 
 class TicketSerializer(serializers.ModelSerializer):
@@ -78,7 +94,7 @@ class TicketSerializer(serializers.ModelSerializer):
 
 
 class TicketListSerializer(TicketSerializer):
-    movie_session = ShowSessionListSerializer(many=False, read_only=True)
+    show_session = ShowSessionListSerializer(many=False, read_only=True)
 
 
 class TicketSeatsSerializer(TicketSerializer):
@@ -97,13 +113,13 @@ class ReservationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         with transaction.atomic():
             tickets_data = validated_data.pop("tickets")
-            order = Reservation.objects.create(**validated_data)
+            reservation = Reservation.objects.create(**validated_data)
             for ticket_data in tickets_data:
-                Ticket.objects.create(order=order, **ticket_data)
-            return order
+                Ticket.objects.create(reservation=reservation, **ticket_data)
+            return reservation
 
 
-class OrderListSerializer(ReservationSerializer):
+class ReservationListSerializer(ReservationSerializer):
     tickets = TicketListSerializer(many=True, read_only=True)
 
 
