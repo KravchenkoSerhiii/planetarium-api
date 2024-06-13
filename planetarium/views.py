@@ -79,7 +79,7 @@ class ShowSessionViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return ShowSessionDetailSerializer
 
-        return ShowSessionSerializer
+        return self.serializer_class
 
 
 class AstronomyShowViewSet(viewsets.ModelViewSet):
@@ -97,7 +97,7 @@ class AstronomyShowViewSet(viewsets.ModelViewSet):
         if self.action == "upload_image":
             return AstronomyShowImageSerializer
 
-        return AstronomyShowSerializer
+        return self.serializer_class
 
     @action(
         methods=["POST"],
@@ -133,7 +133,7 @@ class ReservationViewSet(viewsets.ModelViewSet):
         if self.action == "list":
             return ReservationListSerializer
 
-        return ReservationSerializer
+        return self.serializer_class
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
