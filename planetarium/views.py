@@ -118,7 +118,6 @@ class AstronomyShowViewSet(viewsets.ModelViewSet):
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
-    # queryset = Reservation.objects.all()
     queryset = Reservation.objects.prefetch_related(
         "tickets__show_session__astronomy_show",
         "tickets__show_session__planetarium_dome",
