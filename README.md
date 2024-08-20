@@ -7,6 +7,7 @@ Test account: username: test@user.com , password: testpassword
 Installation
 Install PostgresSQL and create db
 
+```shell
 git clone https://github.com/KravchenkoSerhiii/planetarium-api.git
 cd planetarium_api
 python -m venv venv
@@ -19,6 +20,7 @@ set DB_PASSWORD=<your db password>
 set SECRET_KEY=<your secret key>
 python manage.py migrate
 python manage.py runserver
+```
 
 Run with docker
 
